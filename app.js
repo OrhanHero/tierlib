@@ -6,6 +6,8 @@ const icons = {
   search: '<circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 4 4"/>',
   warning: '<path d="M10.3 4.9a2 2 0 0 1 3.4 0l7.7 12.6a2 2 0 0 1-1.7 3H4.3a2 2 0 0 1-1.7-3z"/><path d="M12 9v4m0 3h.01"/>',
   share: '<path d="M12 16V3m-4 4 4-4 4 4M5 13v7h14v-7"/>',
+  lock: '<rect x="5" y="10" width="14" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3m-4 4v2"/>',
+  eye: '<path d="M2 12s3.6-6 10-6 10 6 10 6-3.6 6-10 6S2 12 2 12Z"/><circle cx="12" cy="12" r="2.5"/>',
   close: '<path d="m6 6 12 12M18 6 6 18"/>',
 };
 const sections = new Map([
@@ -17,6 +19,11 @@ const eventLabels = { visit: 'Besuch', vaccine: 'Impfung', note: 'Vermerk' };
 const main = document.querySelector('#main');
 const navigation = document.querySelector('#navigation');
 const breadcrumb = document.querySelector('#breadcrumb');
+const workspace = {
+  icon: document.querySelector('#workspace-icon'),
+  name: document.querySelector('#workspace-name'),
+  role: document.querySelector('#workspace-role'),
+};
 const shareDialog = document.querySelector('#share-dialog');
 const shareBody = document.querySelector('#share-body');
 
@@ -31,6 +38,10 @@ function icon(name) {
 
 function recordLink(pet, section = 'uebersicht') {
   return '#akte/' + pet.id + (section === 'uebersicht' ? '' : '/' + section);
+}
+
+function emergencyLink(pet) {
+  return '#notfallprofil/' + pet.id;
 }
 
 function avatar(pet, large = false) {
@@ -52,11 +63,15 @@ function meta(label, value, extraClass = '') {
   return `<div class="record-meta ${extraClass}"><small>${label}</small><strong>${value}</strong></div>`;
 }
 
-function showNavigation(current, label) {
-  navigation.innerHTML = `
+function showNavigation(current, label, recipient = false) {
+  navigation.hidden = recipient;
+  navigation.innerHTML = recipient ? '' : `
     <a class="nav-link" href="#tiere"${current === 'tiere' ? ' aria-current="page"' : ''}>${icon('records')}Tierübersicht</a>
     <a class="nav-link" href="#chip-suche"${current === 'chip-suche' ? ' aria-current="page"' : ''}>${icon('chip')}Chip-Suche</a>`;
-  breadcrumb.innerHTML = `<span>Praxisansicht</span><span aria-hidden="true">/</span><strong>${label}</strong>`;
+  workspace.icon.textContent = recipient ? 'ND' : 'TP';
+  workspace.name.textContent = recipient ? 'Demo-Notdienst' : 'Demo-Praxis';
+  workspace.role.textContent = recipient ? 'Empfängeransicht' : 'Praxisansicht';
+  breadcrumb.innerHTML = `<span>${workspace.role.textContent}</span><span aria-hidden="true">/</span><strong>${label}</strong>`;
 }
 
 function overview() {
@@ -199,7 +214,7 @@ function openShareDialog(pet) {
         <h2 id="share-title">Notfallprofil freigeben</h2>
         <button type="button" id="close-share" class="icon-button" aria-label="Dialog schließen">${icon('close')}</button>
       </div>
-      <p class="dialog-copy">Die Demo speichert die Freigabe nur bis zum Neuladen. Sie übermittelt keine Daten.</p>
+      <p class="dialog-copy">Die Empfängeransicht zeigt die Angaben nach Bestätigung in diesem Browserfenster. Es werden keine Daten gesendet.</p>
       <dl class="share-fields">
         <dt>Tierakte</dt><dd>${pet.name}</dd>
         <dt>Empfänger</dt><dd>Demo-Notdienst</dd>
@@ -218,7 +233,7 @@ function openShareDialog(pet) {
     simulatedShares.add(pet.id);
     shareDialog.close();
     render();
-    main.querySelector('#revoke-share').focus();
+    main.querySelector('#recipient-preview').focus();
   });
   shareDialog.showModal();
 }
@@ -244,7 +259,10 @@ function record(pet, section) {
           ${avatar(pet, true)}
           <div><h1 id="pet-name">${pet.name}</h1><p>${pet.species} · ${pet.breed} · ${pet.age} · ${pet.sex}</p></div>
         </div>
-        <button id="share-record" class="button secondary" type="button">${icon('share')}Notfallprofil freigeben</button>
+        <div class="record-actions">
+          <a id="recipient-preview" class="button ${shareActive ? 'primary' : 'secondary'}" href="${emergencyLink(pet)}">${icon('eye')}Empfängeransicht</a>
+          ${shareActive ? '' : `<button id="share-record" class="button primary" type="button">${icon('share')}Notfallprofil freigeben</button>`}
+        </div>
       </div>
       <div class="facts">
         ${meta('Mikrochip', formatChip(pet.chip), 'chip-number')}
@@ -253,21 +271,44 @@ function record(pet, section) {
       </div>
     </section>
     ${alert}
-    ${shareActive ? `<div class="notice sharing-result" role="status"><p>Simulierte Freigabe für den Demo-Notdienst aktiv.</p>
-      <button id="revoke-share" class="button text-button" type="button">Widerrufen</button></div>` : ''}
+    ${shareActive ? `<div class="notice sharing-result"><p role="status">Simulierte Freigabe für den Demo-Notdienst aktiv.</p>
+      <button id="revoke-share" class="button text-button" type="button">Freigabe widerrufen</button></div>` : ''}
     <section class="panel record-content" aria-label="Akte für ${pet.name}">
       <nav class="sections" aria-label="Aktenbereiche">${links}</nav>
       <div class="record-body">${sectionBody(pet, section)}</div>
     </section>`;
 
-  main.querySelector('#share-record').addEventListener('click', () => openShareDialog(pet));
   if (shareActive) {
     main.querySelector('#revoke-share').addEventListener('click', () => {
       simulatedShares.delete(pet.id);
       render();
       main.querySelector('#share-record').focus();
     });
+  } else {
+    main.querySelector('#share-record').addEventListener('click', () => openShareDialog(pet));
   }
+}
+
+function emergencyProfile(pet) {
+  const backLink = pet ? recordLink(pet) : '#tiere';
+  const active = pet && simulatedShares.has(pet.id);
+  const content = active
+    ? `<section id="emergency-profile" class="panel recipient-card" aria-labelledby="recipient-status">
+        <h2 id="recipient-status">Freigabe aktiv</h2>
+        <dl class="recipient-fields">
+          <div><dt>Tiername</dt><dd>${pet.name}</dd></div>
+          <div><dt>Allergiehinweis</dt><dd>${pet.allergy?.name ?? 'Kein Hinweis hinterlegt'}</dd></div>
+        </dl>
+      </section>`
+    : `<section id="emergency-unavailable" class="panel recipient-card recipient-unavailable" aria-labelledby="recipient-status">
+        <span class="hero-icon">${icon('lock')}</span>
+        <div><h2 id="recipient-status">Keine Freigabe aktiv</h2><p>Für dieses Notfallprofil sind derzeit keine Angaben freigegeben.</p></div>
+      </section>`;
+
+  main.innerHTML = `
+    <a id="back-to-practice" class="back" href="${backLink}">Zur Praxisansicht</a>
+    ${heading('Notfallprofil', 'Empfängeransicht für den Demo-Notdienst.')}
+    ${content}`;
 }
 
 function render(moveFocus = false) {
@@ -275,6 +316,9 @@ function render(moveFocus = false) {
   if (route === 'chip-suche') {
     showNavigation('chip-suche', 'Chip-Suche');
     chipSearch();
+  } else if (route === 'notfallprofil') {
+    showNavigation(null, 'Notfallprofil', true);
+    emergencyProfile(pets.find((item) => item.id === id));
   } else if (route === 'akte') {
     const pet = pets.find((item) => item.id === id);
     showNavigation(null, pet ? 'Tierakte · ' + pet.name : 'Tierakte');

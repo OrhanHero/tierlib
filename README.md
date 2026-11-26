@@ -1,6 +1,6 @@
 # Tierlib Prototyp
 
-Tierlib ist ein Browserprototyp für Tierarztpraxen. Er demonstriert, wie sich eine Tierakte über ihre Mikrochipnummer finden lässt und wo der Allergiehinweis in der Akte steht. Die Oberfläche enthält drei fiktive Tierakten mit Stammdaten, Impfungen und Verlauf.
+Tierlib ist ein Browserprototyp für Tierarztpraxen. Er demonstriert die Suche nach Tierakten über ihre Mikrochipnummer und die Freigabe eines eingeschränkten Notfallprofils. Die Oberfläche enthält drei fiktive Tierakten mit Stammdaten, Impfungen und Verlauf.
 
 ## Lokal starten
 
@@ -18,7 +18,13 @@ Die Anwendung ist unter [http://127.0.0.1:4173](http://127.0.0.1:4173) erreichba
 2. Öffne die Akte von **Luna**. In der Übersicht steht der fiktive Allergiehinweis **Penicillin**. Über **Impfungen** und **Verlauf** kannst du die übrigen Einträge ansehen.
 3. Suche nach `000 000 000 000 999`. Die Suche meldet, dass keine Tierakte gefunden wurde.
 
-Über **Notfallprofil freigeben** lässt sich die Freigabe für einen fiktiven Notdienst bestätigen und widerrufen. Der Status gilt bis zum Neuladen. Der Prototyp verwendet ausschließlich Beispieldaten im Browser. Für einen realen Betrieb wären unter anderem Anmeldung, Zugriffsprüfung und Datenübermittlung erforderlich.
+## Notfallprofil ausprobieren
+
+1. Öffne aus Lunas Akte die **Empfängeransicht**. Vor der Freigabe ist dort kein Notfallprofil verfügbar.
+2. Kehre zur Praxisansicht zurück und bestätige **Notfallprofil freigeben**. Öffne die Empfängeransicht erneut. Dort erscheinen als Profildaten der Tiername und der Allergiehinweis.
+3. Widerrufe die Freigabe in der Praxisansicht und öffne die Empfängeransicht erneut. Das Profil ist wieder nicht verfügbar. Auch ein Neuladen beendet die Freigabe.
+
+Der Prototyp simuliert beide Perspektiven mit fiktiven Daten im selben Browser-Tab. Für einen Einsatz in der Praxis wären eine Anmeldung, eine serverseitige Zugriffsprüfung und eine sichere Datenübermittlung erforderlich.
 
 ## Technische Prüfung
 
@@ -29,10 +35,10 @@ npm test
 
 Der erste Befehl prüft die JavaScript-Syntax. Der zweite führt die automatisierten Tests für die Chip-Suche aus.
 
-[Bildschirmaufnahme der fiktiven Akte von Luna](docs/abbildungen/tierakte-luna.png)
+[Bildschirmaufnahme der fiktiven Akte von Luna in Version 0.1.0](docs/abbildungen/tierakte-luna.png) · [Empfängeransicht auf einem schmalen Bildschirm in Version 0.2.0](docs/abbildungen/notfallprofil-mobil-v020.png)
 
 ## Projektdokumentation
 
 - [Doctolib-Vergleich und REA-Beobachtungen](docs/doctolib-vergleich.md) hält Referenzabläufe, Quellen und die Ableitungen für Tierlib fest.
-- [MVP-Testplan](docs/mvp-testplan.md) beschreibt die Aufgabe für Testpersonen, Erfolgskriterien und das Testprotokoll. Die Ergebnisse werden nach der Durchführung eingetragen.
+- [MVP-Testplan](docs/mvp-testplan.md) beschreibt die Aufgabe für Testpersonen, Erfolgskriterien und das Testprotokoll. Die Tests mit Praxispersonal stehen noch aus.
 - [Entwicklungsprotokoll](docs/entwicklungsprotokoll.md) dokumentiert Umsetzung, Entscheidungen und technische Prüfungen.

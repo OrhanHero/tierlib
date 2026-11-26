@@ -136,6 +136,7 @@ h3 { font-size: 1.02rem; line-height: 1.3; letter-spacing: -.02em; }
 .back:hover { text-decoration: underline; }
 .record-header { padding: 1.4rem 1.5rem 1.25rem; margin-bottom: 1rem; }
 .record-header .title-row { display: flex; justify-content: space-between; gap: .75rem; align-items: center; flex-wrap: wrap; }
+.record-actions { display: flex; gap: .55rem; align-items: center; flex-wrap: wrap; }
 .record-header h1 { font-size: clamp(1.85rem, 4vw, 2.55rem); }
 .pet-title p { color: var(--muted); margin-top: .22rem; }
 .facts { display: grid; grid-template-columns: 1.25fr 1fr 1fr; gap: .8rem; border-top: 1px solid var(--line); padding-top: .95rem; margin-top: 1.1rem; }
@@ -160,7 +161,15 @@ h3 { font-size: 1.02rem; line-height: 1.3; letter-spacing: -.02em; }
 .entry p { margin-top: .21rem; }
 .entry-heading { display: flex; gap: .47rem; align-items: center; flex-wrap: wrap; }
 .entry-tag { background: #eef5f1; color: #3c6258; padding: .12rem .54rem; border-radius: 100px; font-size: .74rem; font-weight: 660; }
-.sharing-result { display: flex; align-items: center; gap: .55rem; justify-content: space-between; }
+.sharing-result { display: flex; align-items: center; gap: .55rem; justify-content: space-between; flex-wrap: wrap; }
+.sharing-result p { margin: 0; }
+.recipient-card { max-width: 48rem; padding: 1.35rem 1.55rem; }
+.recipient-card p { color: var(--muted); margin-top: .35rem; }
+.recipient-unavailable { display: flex; gap: 1rem; align-items: center; }
+.recipient-fields { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: .7rem; margin: 1rem 0 0; }
+.recipient-fields > div { padding: .7rem .85rem; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); }
+.recipient-fields dt { color: var(--muted); font-size: .9rem; }
+.recipient-fields dd { margin: .25rem 0 0; font-weight: 700; }
 .empty { padding: 1.35rem; }
 .empty p { margin-bottom: .75rem; }
 
@@ -205,6 +214,7 @@ dialog::backdrop { background: rgb(12 27 23 / 53%); }
   .panel-head, .search-card, .side-note, .record-header, .record-body { padding: 1rem; }
   .facts { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .facts > :first-child { grid-column: 1 / -1; }
+  .recipient-card { padding: 1rem; }
 }
 @media (max-width: 380px) {
   .search-line { flex-direction: column; }
@@ -212,5 +222,6 @@ dialog::backdrop { background: rgb(12 27 23 / 53%); }
   .pet-row > .button { grid-area: 2 / 2; }
   .pet-row > .record-meta small, .pet-row > .record-meta strong { display: block; }
   .dialog-actions .button { width: 100%; }
+  .recipient-fields { grid-template-columns: 1fr; }
   .entry { grid-template-columns: 1fr; gap: .28rem; }
 }
