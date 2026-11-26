@@ -20,11 +20,12 @@ Die Anwendung ist unter [http://127.0.0.1:4173](http://127.0.0.1:4173) erreichba
 
 ## Notfallprofil ausprobieren
 
-1. Öffne aus Lunas Akte die **Empfängeransicht**. Vor der Freigabe ist dort kein Notfallprofil verfügbar.
-2. Kehre zur Praxisansicht zurück und bestätige **Notfallprofil freigeben**. Öffne die Empfängeransicht erneut. Dort erscheinen als Profildaten der Tiername und der Allergiehinweis.
-3. Widerrufe die Freigabe in der Praxisansicht und öffne die Empfängeransicht erneut. Das Profil ist wieder nicht verfügbar. Auch ein Neuladen beendet die Freigabe.
+1. Öffne in Lunas Akte **Freigabe anfragen** und bestätige mit **Anfrage erstellen**. In der Empfängeransicht sind noch keine Profildaten sichtbar.
+2. Öffne in der Praxisansicht die **Halteransicht**. Prüfe Empfänger und Umfang und wähle **Zustimmen** oder **Ablehnen**.
+3. Öffne nach einer Zustimmung über die Praxisansicht die **Empfängeransicht**. Dort erscheinen der Tiername und der Allergiehinweis.
+4. Widerrufe in der Halter- oder Praxisansicht die Freigabe. Die Empfängeransicht zeigt wieder keine Profildaten. Auch ein Neuladen setzt die Simulation zurück.
 
-Der Prototyp simuliert beide Perspektiven mit fiktiven Daten im selben Browser-Tab. Für einen Einsatz in der Praxis wären eine Anmeldung, eine serverseitige Zugriffsprüfung und eine sichere Datenübermittlung erforderlich.
+Der Prototyp simuliert die drei Perspektiven mit fiktiven Daten im selben Browser-Tab. Für einen Einsatz in der Praxis wären eine Anmeldung, eine serverseitige Zugriffsprüfung und eine sichere Datenübermittlung erforderlich.
 
 ## Technische Prüfung
 
@@ -39,6 +40,8 @@ Der erste Befehl prüft die JavaScript-Syntax. Der zweite führt die automatisie
 
 ## Projektdokumentation
 
+- [Business Model Canvas](docs/business-model-canvas.md) beschreibt die neun Bausteine des Tierlib-Geschäftsmodells und die zu prüfenden Annahmen.
+- [Value Proposition Canvas](docs/value-proposition-canvas.md) verbindet die Bedürfnisse von Praxispersonal und Tierhalter:innen mit den Prototypfunktionen.
 - [Doctolib-Vergleich und REA-Beobachtungen](docs/doctolib-vergleich.md) hält Referenzabläufe, Quellen und die Ableitungen für Tierlib fest.
 - [MVP-Testplan](docs/mvp-testplan.md) beschreibt die Aufgabe für Testpersonen, Erfolgskriterien und das Testprotokoll. Die Tests mit Praxispersonal stehen noch aus.
 - [Entwicklungsprotokoll](docs/entwicklungsprotokoll.md) dokumentiert Umsetzung, Entscheidungen und technische Prüfungen.

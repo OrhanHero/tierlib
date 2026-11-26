@@ -36,6 +36,13 @@ Die Syntaxprüfung und die vier bestehenden Tests für die Chip-Suche bestanden 
 
 Die [Bildschirmaufnahme der Empfängeransicht](abbildungen/notfallprofil-mobil-v020.png) stammt aus dem zweiten REA-Lauf. Der Ablauf ist im [README](../README.md#notfallprofil-ausprobieren) nachvollziehbar beschrieben.
 
+## 26. November 2026 · Version 0.3.0
+
+- Das [Business Model Canvas](business-model-canvas.md) beschreibt alle neun Bausteine und formuliert die zu prüfenden Annahmen. Das [Value Proposition Canvas](value-proposition-canvas.md) verbindet die Bedürfnisse von Praxispersonal und Tierhalter:innen mit konkreten App-Funktionen.
+- Die Praxis erstellt jetzt eine Freigabeanfrage. Die Halteransicht zeigt Tier, Empfänger und Datenumfang und bietet Zustimmung, Ablehnung und Widerruf an. Der Notdienst sieht Tiername und Allergiehinweis erst nach Zustimmung. Der Ablauf verwendet fiktive Daten und einen flüchtigen Zustand im Browser-Tab.
+- Die Syntaxprüfung und alle vier Suchtests bestanden. Der REA-Lauf bei 390 × 844 Pixeln prüfte Chip-Suche, offene Anfrage, Ablehnung, anschließende Zustimmung, den begrenzten Empfängerumfang und Widerruf. Alle 35 aufgezeichneten Schritte wurden abgeschlossen. Evidence-ID `ev_acde762f62ab251da5ec9d4bde491221a7b351c76ba257281606dc2b7ee12e40`.
+- Der [MVP-Testplan](mvp-testplan.md) enthält einen getrennten Zusatztest für die Halteransicht. Ergebnisse mit Testpersonen stehen aus. Praxisabo, Pilotregion und Wirtschaftlichkeit bleiben Annahmen.
+
 ## Aussagegrenzen
 
 Die dokumentierten Prüfungen belegen Browserabläufe und Suchlogik im fiktiven Datenbestand. Die REA-Läufe wurden automatisiert ausgeführt. Tests mit Personen, Marktvalidierung und Praxiseinsatz sind noch offen. Die simulierte Freigabe erzeugt keine Übermittlung. Für einen Praxiseinsatz wären unter anderem überprüfte Identitäten, eine serverseitige Zugriffskontrolle und eine sichere Datenhaltung gesondert zu konzipieren und zu prüfen.

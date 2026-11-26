@@ -28,7 +28,12 @@ const shareDialog = document.querySelector('#share-dialog');
 const shareBody = document.querySelector('#share-body');
 
 // This represents the decision in the demo only. Nothing is sent or persisted.
-const simulatedShares = new Set();
+const simulatedShares = new Map();
+const shareLabels = {
+  pending: 'Zustimmung steht aus.',
+  approved: 'Notfallprofil für den Demo-Notdienst freigegeben.',
+  declined: 'Freigabe wurde abgelehnt.',
+};
 let lastQuery = '';
 let searchSubmitted = false;
 
@@ -63,14 +68,17 @@ function meta(label, value, extraClass = '') {
   return `<div class="record-meta ${extraClass}"><small>${label}</small><strong>${value}</strong></div>`;
 }
 
-function showNavigation(current, label, recipient = false) {
-  navigation.hidden = recipient;
-  navigation.innerHTML = recipient ? '' : `
+function showNavigation(current, label, view = 'practice') {
+  navigation.hidden = view !== 'practice';
+  navigation.innerHTML = view !== 'practice' ? '' : `
     <a class="nav-link" href="#tiere"${current === 'tiere' ? ' aria-current="page"' : ''}>${icon('records')}Tierübersicht</a>
     <a class="nav-link" href="#chip-suche"${current === 'chip-suche' ? ' aria-current="page"' : ''}>${icon('chip')}Chip-Suche</a>`;
-  workspace.icon.textContent = recipient ? 'ND' : 'TP';
-  workspace.name.textContent = recipient ? 'Demo-Notdienst' : 'Demo-Praxis';
-  workspace.role.textContent = recipient ? 'Empfängeransicht' : 'Praxisansicht';
+  const context = {
+    practice: ['TP', 'Demo-Praxis', 'Praxisansicht'],
+    recipient: ['ND', 'Demo-Notdienst', 'Empfängeransicht'],
+    owner: ['TH', 'Tierhalter:in', 'Halteransicht'],
+  }[view];
+  [workspace.icon.textContent, workspace.name.textContent, workspace.role.textContent] = context;
   breadcrumb.innerHTML = `<span>${workspace.role.textContent}</span><span aria-hidden="true">/</span><strong>${label}</strong>`;
 }
 
@@ -211,10 +219,10 @@ function openShareDialog(pet) {
   shareBody.innerHTML = `
     <form id="share-form">
       <div class="dialog-header">
-        <h2 id="share-title">Notfallprofil freigeben</h2>
+        <h2 id="share-title">Notfallfreigabe anfragen</h2>
         <button type="button" id="close-share" class="icon-button" aria-label="Dialog schließen">${icon('close')}</button>
       </div>
-      <p class="dialog-copy">Die Empfängeransicht zeigt die Angaben nach Bestätigung in diesem Browserfenster. Es werden keine Daten gesendet.</p>
+      <p class="dialog-copy">In der Demo entscheidest du in der Halteransicht über die Anfrage. Die Simulation läuft in diesem Tab.</p>
       <dl class="share-fields">
         <dt>Tierakte</dt><dd>${pet.name}</dd>
         <dt>Empfänger</dt><dd>Demo-Notdienst</dd>
@@ -222,7 +230,7 @@ function openShareDialog(pet) {
       </dl>
       <div class="dialog-actions">
         <button type="button" id="cancel-share" class="button secondary" autofocus>Abbrechen</button>
-        <button type="submit" class="button primary">Freigabe simulieren</button>
+        <button type="submit" class="button primary">Anfrage erstellen</button>
       </div>
     </form>`;
 
@@ -230,10 +238,10 @@ function openShareDialog(pet) {
   shareBody.querySelector('#cancel-share').addEventListener('click', () => shareDialog.close());
   shareBody.querySelector('#share-form').addEventListener('submit', (event) => {
     event.preventDefault();
-    simulatedShares.add(pet.id);
+    simulatedShares.set(pet.id, 'pending');
     shareDialog.close();
     render();
-    main.querySelector('#recipient-preview').focus();
+    main.querySelector('#owner-preview').focus();
   });
   shareDialog.showModal();
 }
@@ -247,7 +255,8 @@ function record(pet, section) {
     : `<section class="notice" aria-labelledby="allergy-title">
         <h2 id="allergy-title">Allergiehinweise</h2><p>Für diese Testakte ist kein Hinweis hinterlegt.</p>
       </section>`;
-  const shareActive = simulatedShares.has(pet.id);
+  const shareState = simulatedShares.get(pet.id);
+  const canRequest = shareState !== 'pending' && shareState !== 'approved';
   const links = [...sections.entries()].map(([key, label]) => `
     <a class="section-link" href="${recordLink(pet, key)}"${key === section ? ' aria-current="page"' : ''}>${label}</a>`).join('');
 
@@ -260,8 +269,9 @@ function record(pet, section) {
           <div><h1 id="pet-name">${pet.name}</h1><p>${pet.species} · ${pet.breed} · ${pet.age} · ${pet.sex}</p></div>
         </div>
         <div class="record-actions">
-          <a id="recipient-preview" class="button ${shareActive ? 'primary' : 'secondary'}" href="${emergencyLink(pet)}">${icon('eye')}Empfängeransicht</a>
-          ${shareActive ? '' : `<button id="share-record" class="button primary" type="button">${icon('share')}Notfallprofil freigeben</button>`}
+          <a id="recipient-preview" class="button ${shareState === 'approved' ? 'primary' : 'secondary'}" href="${emergencyLink(pet)}">${icon('eye')}Empfängeransicht</a>
+          <a id="owner-preview" class="button ${shareState === 'pending' ? 'primary' : 'secondary'}" href="#halter/${pet.id}">Halteransicht</a>
+          ${canRequest ? `<button id="share-record" class="button primary" type="button">${icon('share')}Freigabe anfragen</button>` : ''}
         </div>
       </div>
       <div class="facts">
@@ -271,14 +281,16 @@ function record(pet, section) {
       </div>
     </section>
     ${alert}
-    ${shareActive ? `<div class="notice sharing-result"><p role="status">Simulierte Freigabe für den Demo-Notdienst aktiv.</p>
-      <button id="revoke-share" class="button text-button" type="button">Freigabe widerrufen</button></div>` : ''}
+    ${shareState ? `<div class="notice sharing-result">
+      <p id="request-status" role="status">${shareLabels[shareState]}</p>
+      ${canRequest ? '' : `<button id="revoke-share" class="button text-button" type="button">${shareState === 'approved' ? 'Freigabe widerrufen' : 'Anfrage zurückziehen'}</button>`}
+    </div>` : ''}
     <section class="panel record-content" aria-label="Akte für ${pet.name}">
       <nav class="sections" aria-label="Aktenbereiche">${links}</nav>
       <div class="record-body">${sectionBody(pet, section)}</div>
     </section>`;
 
-  if (shareActive) {
+  if (!canRequest) {
     main.querySelector('#revoke-share').addEventListener('click', () => {
       simulatedShares.delete(pet.id);
       render();
@@ -289,9 +301,49 @@ function record(pet, section) {
   }
 }
 
+function ownerView(pet) {
+  if (!pet) {
+    main.innerHTML = `<section class="panel empty"><h1>Tierakte nicht gefunden</h1>
+      <p>Wähle zuerst eine Testakte in der Praxisansicht aus.</p>
+      <a class="button primary" href="#tiere">Zur Tierübersicht</a></section>`;
+    return;
+  }
+
+  const state = simulatedShares.get(pet.id);
+  const actions = state === 'pending'
+    ? '<button id="owner-approve" class="button primary" type="button">Zustimmen</button><button id="owner-decline" class="button secondary" type="button">Ablehnen</button>'
+    : state === 'approved'
+      ? '<button id="owner-revoke" class="button secondary" type="button">Freigabe widerrufen</button>'
+      : '';
+
+  main.innerHTML = `
+    <a id="back-to-record" class="back" href="${recordLink(pet)}">Zur Praxisansicht</a>
+    ${heading('Halteransicht', 'Hier entscheidest du über die simulierte Freigabe.')}
+    <section class="panel recipient-card" aria-labelledby="owner-status">
+      <h2 id="owner-status" tabindex="-1">${shareLabels[state] ?? 'Keine offene Anfrage'}</h2>
+      ${state ? `<dl class="share-fields">
+        <dt>Tierakte</dt><dd>${pet.name}</dd>
+        <dt>Empfänger</dt><dd>Demo-Notdienst</dd>
+        <dt>Umfang</dt><dd>Tiername und Allergiehinweis</dd>
+      </dl>` : '<p>Eine Anfrage kann in der Praxisansicht erstellt werden.</p>'}
+      ${actions ? `<div class="dialog-actions">${actions}</div>` : ''}
+    </section>`;
+
+  function decide(nextState) {
+    if (nextState) simulatedShares.set(pet.id, nextState);
+    else simulatedShares.delete(pet.id);
+    ownerView(pet);
+    main.querySelector('#owner-status').focus();
+  }
+
+  main.querySelector('#owner-approve')?.addEventListener('click', () => decide('approved'));
+  main.querySelector('#owner-decline')?.addEventListener('click', () => decide('declined'));
+  main.querySelector('#owner-revoke')?.addEventListener('click', () => decide(null));
+}
+
 function emergencyProfile(pet) {
   const backLink = pet ? recordLink(pet) : '#tiere';
-  const active = pet && simulatedShares.has(pet.id);
+  const active = pet && simulatedShares.get(pet.id) === 'approved';
   const content = active
     ? `<section id="emergency-profile" class="panel recipient-card" aria-labelledby="recipient-status">
         <h2 id="recipient-status">Freigabe aktiv</h2>
@@ -317,8 +369,11 @@ function render(moveFocus = false) {
     showNavigation('chip-suche', 'Chip-Suche');
     chipSearch();
   } else if (route === 'notfallprofil') {
-    showNavigation(null, 'Notfallprofil', true);
+    showNavigation(null, 'Notfallprofil', 'recipient');
     emergencyProfile(pets.find((item) => item.id === id));
+  } else if (route === 'halter') {
+    showNavigation(null, 'Freigaben', 'owner');
+    ownerView(pets.find((item) => item.id === id));
   } else if (route === 'akte') {
     const pet = pets.find((item) => item.id === id);
     showNavigation(null, pet ? 'Tierakte · ' + pet.name : 'Tierakte');

@@ -1,4 +1,4 @@
-# MVP-Testplan für die Chip-Suche
+# MVP-Testplan für Chip-Suche und Notfallfreigabe
 
 ## Testziel
 
@@ -25,3 +25,9 @@ Pro Durchlauf wird eine Zeile ausgefüllt. Erfasst werden nur der Bezug zur Ziel
 | | | | | | |
 
 In der Auswertung stehen die Zahl der erfolgreichen Durchläufe, wiederkehrende Hindernisse und daraus abgeleitete Änderungen am Prototyp. Gibt es weniger als fünf Durchläufe mit der Zielgruppe, bleibt das Erfolgskriterium offen. Die Ergebnisse werden nach dem Test ergänzt.
+
+## Zusatztest für die Halteransicht
+
+Die Moderation bereitet für Luna eine offene Freigabeanfrage vor und öffnet die Halteransicht. Fünf Tierhalter:innen erhalten einzeln die Aufgabe: „Ein Notdienst hat Angaben zu Luna angefragt. Wer bekommt welche Angaben? Entscheiden Sie dann, ob Sie zustimmen, und zeigen Sie, wie Sie eine erteilte Zustimmung zurücknehmen würden.“ Wird abgelehnt, prüft die Moderation, ob die Person den erwarteten Empfängerstatus richtig beschreibt. Für den Widerruf startet sie mit einer vorbereiteten Zustimmung neu.
+
+Als vorläufiges Erfolgskriterium benennen mindestens vier von fünf Personen ohne Hilfe **Demo-Notdienst** als Empfänger sowie **Tiername und Allergiehinweis** als Umfang. Dieselben Personen finden die Aktion für Zustimmung oder Ablehnung und widerrufen eine aktive Freigabe. Das Protokoll erfasst pro Person Empfänger, genannte Angaben, Entscheidung, Widerruf und benötigte Hilfen. Beobachtete Ergebnisse kommen erst nach Durchführung hinzu.
