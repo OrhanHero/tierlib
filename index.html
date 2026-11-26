@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="Interaktiver Tierlib-Prototyp für den Zugriff auf fiktive Tierakten.">
+  <meta name="theme-color" content="#122422">
+  <title>Tierlib · Digitale Tierakte</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="./styles.css">
+  <script type="module" src="./app.js"></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Zum Inhalt</a>
+  <div class="shell">
+    <aside class="sidebar">
+      <a class="brand" href="#tiere" aria-label="Tierlib – Tierübersicht">
+        <span class="brand-mark" aria-hidden="true">✚</span>
+        <span>Tierlib<small>Digitale Tierakte</small></span>
+      </a>
+      <nav id="navigation" aria-label="Hauptnavigation"></nav>
+      <div class="workspace">
+        <span class="workspace-icon" aria-hidden="true">TP</span>
+        <span>Demo-Praxis<small>Praxisansicht</small></span>
+      </div>
+    </aside>
+    <div class="page">
+      <header class="topbar">
+        <div id="breadcrumb" class="breadcrumbs"></div>
+        <span class="demo-tag"><span aria-hidden="true"></span>Nur fiktive Daten</span>
+      </header>
+      <main id="main" tabindex="-1"></main>
+    </div>
+  </div>
+  <dialog id="share-dialog" aria-labelledby="share-title">
+    <div id="share-body"></div>
+  </dialog>
+</body>
+</html>
